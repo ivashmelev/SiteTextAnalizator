@@ -32,6 +32,6 @@ let getSitePage = (arr) => {
 
 
 
-arr = ['https://www.1ditis.ru', 'https://yandex.ru', 'https://google.com'];
+arr = ['https://www.1ditis.ru', 'https://yandex.ru', 'https://google.com', 'https://youtube.com'];
 
 getSitePage(arr);
