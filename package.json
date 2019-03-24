@@ -1,15 +1,33 @@
 {
-  "name": "textanalize.loc",
-  "version": "1.0.0",
-  "description": "",
+  "name": "sitetextanalizator",
+  "version": "0.0.1",
+  "description": "This app for analyze text on site. ",
   "main": "app.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "author": "",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ivashmelev/SiteTextAnalizator.git"
+  },
+  "keywords": [
+    "txt",
+    "site",
+    "analyze",
+    "web-scrapping"
+  ],
+  "author": "Ivan Shmelev",
   "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/ivashmelev/SiteTextAnalizator/issues"
+  },
+  "homepage": "https://github.com/ivashmelev/SiteTextAnalizator#readme",
   "dependencies": {
     "cheerio": "^1.0.0-rc.2",
+    "hapi": "^18.1.0",
     "request": "^2.88.0"
+  },
+  "devDependencies": {
+    "nodemon": "^1.18.10"
   }
 }
