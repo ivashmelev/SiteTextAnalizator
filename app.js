@@ -29,9 +29,53 @@ let getSitePage = (arr) => {
         return newString;
       }
 
-      let deleteElem = (arr, index) => {
-        arr.splice(index-1, 1);
-        return arr;
+      let decreasingSort = (wordA, wordB) => {
+        // Функция для сортировки массива по убыванию
+        return wordB.score - wordA.score;
+      }
+
+      let getTopWords = (arr) => {
+        // Возврщает массив трех топ-слов
+        let arrData = [];
+        let arrResult = [];
+        let arrRaiting = [];
+        let topWords = [];
+        let raiting = {};
+
+        for(i in arr){
+          if(arr[i]!=""){
+            arrData.push(arr[i]);
+          }
+        }
+        
+        for(i in arrData){
+          if(arrData[i].length<4){
+  
+          }
+          else{
+            arrResult.push(arrData[i].toLowerCase());
+          }
+        }
+
+        for (i in arrResult){
+          let word = arrResult[i];
+          if (raiting[word] != undefined){
+            raiting[word]++;
+          }
+          else{
+            raiting[word] = 1;
+          }
+        }
+
+        for(key in raiting){
+          arrRaiting.push(new Object({word: key, score: raiting[key]}));
+        }
+  
+        arrRaiting.sort(decreasingSort);
+  
+        topWords = [arrRaiting[0].word, arrRaiting[1].word, arrRaiting[2].word];
+
+        return topWords;
       }
       
       console.log(url);
@@ -42,24 +86,30 @@ let getSitePage = (arr) => {
       let text = $("body").text();
       let arrText = [];
       let arrFilterString = [];
-      let arrData = [];
+
       arrText = text.split(" ");
 
       for(i in arrText){
         arrFilterString.push(filterString(arrText[i]));
       }
 
-      for(i in arrFilterString){
-        if(arrFilterString[i]!=""){
-          arrData.push(arrFilterString[i]);
-        }
-      }
+      let topWords = url + " - " + getTopWords(arrFilterString).join(" | ")+"\n";
 
-      for(i in arrData[i]){
 
-      }
 
-      console.log(arrData);
+      fs.appendFileSync("sites.pdf", topWords);
+
+ 
+
+      
+
+
+      
+
+      
+
+      // console.log(arrResult);
+      console.log(getTopWords(arrFilterString));
     });
   }
 
@@ -70,7 +120,7 @@ let getSitePage = (arr) => {
 }
 
 
-arr = ["http://1ditis.ru"];
+arr = ["http://1ditis.ru", "https://yandex.ru"];
 
 getSitePage(arr);
 
