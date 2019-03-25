@@ -2,15 +2,42 @@ const hapi = require("hapi");
 const cheerio = require("cheerio");
 const fs = require("fs");
 const request = require("request");
+const pdfFile = require("pdfkit");
 
 const server = hapi.Server({
   host: "localhost",
   port: 3000
 });
 
-let getSitePage = (arr) => {
+const init = async () => {
+  await server.start();
+  console.log(`Server running at: ${server.info.uri}`);
+}
 
+process.on("unhandledRejection", (err) => {
+  console.log(err);
+  process.exit(1);
+});
+
+server.route({
+  method: "GET",
+  path: "/",
+  handler: (request, h) => {
+    arr = ["http://1ditis.ru", "https://yandex.ru"];
+    
+    getSitePage(arr);
+    // arr = request.query.array.split(",");
+
+  }
+});
+
+init();
+
+let topWords = [];
+let getSitePage = (arr) => {
+  
   let sendRequest = (url) => {
+
 
     request(url, (err, response, body) => {
 
@@ -78,8 +105,6 @@ let getSitePage = (arr) => {
         return topWords;
       }
       
-      console.log(url);
-
       if(err) throw err;
 
       let $ = cheerio.load(body);
@@ -93,35 +118,30 @@ let getSitePage = (arr) => {
         arrFilterString.push(filterString(arrText[i]));
       }
 
-      let topWords = url + " - " + getTopWords(arrFilterString).join(" | ")+"\n";
+      let stringSites = url + " - " + getTopWords(arrFilterString).join(" | ")+";"+"\n";
 
-
-
-      fs.appendFileSync("sites.pdf", topWords);
-
- 
+      // for(i in arr){
+        topWords.push(stringSites);
+      // }
 
       
-
-
-      
-
-      
-
-      // console.log(arrResult);
-      console.log(getTopWords(arrFilterString));
+      // fs.appendFileSync("sites.pdf", topWords);
     });
+    topWords.join(";");
+    return topWords;
   }
+
+  pdf = new pdfFile;
+  pdf.pipe(fs.createWriteStream("sites.pdf"));
+  pdf.font("fonts/OpenSans/OpenSans-Regular.ttf");
 
   for(i in arr){
-    sendRequest(arr[i]);
+    // sendRequest(arr[i]);
+    pdf.fontSize(14).text(sendRequest(arr[i]));
   }
+  // pdf.font()
+  // pdf.addPage().text(topWords);
+  // pdf.text(topWords);
+  pdf.end();
 
 }
-
-
-arr = ["http://1ditis.ru", "https://yandex.ru"];
-
-getSitePage(arr);
-
-console.log(1);
