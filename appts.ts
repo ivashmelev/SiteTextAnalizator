@@ -1,5 +1,5 @@
 const hapi = require("hapi");
-const cheerio = require("cheerio");
+const ch = require("cheerio");
 const fs = require("fs");
 const request = require("request");
 const pdfFile = require("pdfkit");
@@ -9,8 +9,8 @@ const server = hapi.Server({
   port: 3000
 });
 
-const init = async () => {
-  await server.start();
+const init = () => {
+  server.start();
   console.log(`Server running at: ${server.info.uri}`);
 }
 
@@ -23,7 +23,7 @@ server.route({
   method: "GET",
   path: "/",
   handler: (request, h) => {
-    arr = ["http://1ditis.ru", "https://yandex.ru", "https://vk.com"];
+    let arr = ["http://1ditis.ru", "https://yandex.ru", "https://vk.com"];
     
     getSitePage(arr, arr.length);
     let hello ="ReadMe \n This method for works with SiteTextAnalizator";
@@ -35,20 +35,20 @@ init();
 
 let getSitePage = (arr, length) => {
   let topWords = [];
-  pdf = new pdfFile;
+  let pdf = new pdfFile;
   pdf.pipe(fs.createWriteStream("sites.pdf"));
   pdf.font("fonts/OpenSans/OpenSans-Regular.ttf");
 
-  let sendRequest = (url) => {
-    countRequest = 0;
-    request(url, (err, response, body) => {
+  let sendRequest = (url:string) => {
+    let countRequest = 0;
+    request(url, (err, response, body:string) => {
       countRequest++;
 
       let filterString = (string) => {
         // Отфильтровывает строку от \n и пробелов
         let newString = "";
         
-        for(i in string){
+        for(let i in string){
           if(string[i]=="\n" || string[i]==" "){
             newString = newString+"";
           }
@@ -72,13 +72,13 @@ let getSitePage = (arr, length) => {
         let topWords = [];
         let raiting = {};
 
-        for(i in arr){
+        for(let i in arr){
           if(arr[i]!=""){
             arrData.push(arr[i]);
           }
         }
         
-        for(i in arrData){
+        for(let i in arrData){
           if(arrData[i].length<4){
   
           }
@@ -87,7 +87,7 @@ let getSitePage = (arr, length) => {
           }
         }
 
-        for (i in arrResult){
+        for (let i in arrResult){
           let word = arrResult[i];
           if (raiting[word] != undefined){
             raiting[word]++;
@@ -97,7 +97,7 @@ let getSitePage = (arr, length) => {
           }
         }
 
-        for(key in raiting){
+        for(let key in raiting){
           arrRaiting.push(new Object({word: key, score: raiting[key]}));
         }
   
@@ -110,14 +110,14 @@ let getSitePage = (arr, length) => {
       
       if(err) throw err;
 
-      let $ = cheerio.load(body);
+      let $ = ch.load(body);
       let text = $("body").text();
       let arrText = [];
       let arrFilterString = [];
 
       arrText = text.split(" ");
 
-      for(i in arrText){
+      for(let i in arrText){
         arrFilterString.push(filterString(arrText[i]));
       }
 
@@ -128,9 +128,7 @@ let getSitePage = (arr, length) => {
     });
   }
 
-  for(i in arr){
+  for(let i in arr){
     sendRequest(arr[i]);
-    if(i==arr.length-1){
-    }
   }
 }
