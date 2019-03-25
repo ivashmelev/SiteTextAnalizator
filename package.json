@@ -5,7 +5,8 @@
   "main": "app.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "nodemon app.js"
+    "start": "nodemon app.js",
+    "compile": "tsc app.ts -t ES6"
   },
   "repository": {
     "type": "git",
@@ -26,6 +27,7 @@
   "dependencies": {
     "cheerio": "^1.0.0-rc.2",
     "hapi": "^18.1.0",
+    "inert": "^5.1.2",
     "nodemon": "^1.18.10",
     "pdfkit": "^0.9.0",
     "request": "^2.88.0",

@@ -6,41 +6,63 @@ const pdfFile = require("pdfkit");
 
 const server = hapi.Server({
   host: "localhost",
-  port: 3000
+  port: 3000,
 });
 
-const init = () => {
-  server.start();
+
+const init = async () => {
+
+  process.on("unhandledRejection", (err) => {
+    console.log(err);
+    process.exit(1);
+  });
+
+  server.route({
+    method: "GET",
+    path: "/getSitePage",
+    handler: (request, h) => {
+      let arr = request.query.array.split(";");
+      getSitePage(arr, arr.length);
+      return "<a href='"+server.info.uri+"/sites.pdf'>"+server.info.uri+"/sites.pdf</a>"
+    }
+  });
+
+  server.route({
+    method: "GET",
+    path: "/sites.pdf",
+    handler: (request, h) => {
+      return h.file("sites.pdf");
+    }
+  });
+
+  server.route({
+    method: "GET",
+    path: "/",
+    handler: (request, h) => {
+      return h.file("static/index.html");
+    }
+  });
+
+  await server.start();
+  server.register(require("inert"));
   console.log(`Server running at: ${server.info.uri}`);
+
 }
-
-process.on("unhandledRejection", (err) => {
-  console.log(err);
-  process.exit(1);
-});
-
-server.route({
-  method: "GET",
-  path: "/",
-  handler: (request, h) => {
-    let arr = ["http://1ditis.ru", "https://yandex.ru", "https://vk.com"];
-    
-    getSitePage(arr, arr.length);
-    let hello ="ReadMe \n This method for works with SiteTextAnalizator";
-    return hello;
-  }
-});
 
 init();
 
+declare let countRequest;
+
 let getSitePage = (arr, length) => {
-  let topWords = [];
+
   let pdf = new pdfFile;
   pdf.pipe(fs.createWriteStream("sites.pdf"));
   pdf.font("fonts/OpenSans/OpenSans-Regular.ttf");
 
   let sendRequest = (url:string) => {
-    let countRequest = 0;
+
+    countRequest = 0;
+    
     request(url, (err, response, body:string) => {
       countRequest++;
 
