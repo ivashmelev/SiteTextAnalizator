@@ -26,6 +26,7 @@ server.route({
     arr = ["http://1ditis.ru", "https://yandex.ru"];
     
     getSitePage(arr);
+    // pdf.end();
     // arr = request.query.array.split(",");
 
   }
@@ -34,7 +35,11 @@ server.route({
 init();
 
 let topWords = [];
+pdf = new pdfFile;
+pdf.pipe(fs.createWriteStream("sites.pdf"));
+pdf.font("fonts/OpenSans/OpenSans-Regular.ttf");
 let getSitePage = (arr) => {
+
   
   let sendRequest = (url) => {
 
@@ -118,10 +123,11 @@ let getSitePage = (arr) => {
         arrFilterString.push(filterString(arrText[i]));
       }
 
-      let stringSites = url + " - " + getTopWords(arrFilterString).join(" | ")+";"+"\n";
+      pdf.fontSize(14).text(url + " - " + getTopWords(arrFilterString).join(" | ")+";"+"\n");
+      pdf.fontSize(14).text("132131");
+      // pdf.end();
 
       // for(i in arr){
-        topWords.push(stringSites);
       // }
 
       
@@ -131,17 +137,16 @@ let getSitePage = (arr) => {
     return topWords;
   }
 
-  pdf = new pdfFile;
-  pdf.pipe(fs.createWriteStream("sites.pdf"));
-  pdf.font("fonts/OpenSans/OpenSans-Regular.ttf");
+  
 
   for(i in arr){
-    // sendRequest(arr[i]);
-    pdf.fontSize(14).text(sendRequest(arr[i]));
+    sendRequest(arr[i]);
+    // pdf.fontSize(14).text(sendRequest(arr[i]));
   }
+  pdf.end();
+
   // pdf.font()
   // pdf.addPage().text(topWords);
   // pdf.text(topWords);
-  pdf.end();
 
 }
